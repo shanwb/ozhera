@@ -45,6 +45,7 @@
         <junit.version>4.12</junit.version>
         <!-- Replace it with the absolute path of your own trace-etl project. issue#19-->
         <maven.jcommonDirectory>~</maven.jcommonDirectory>
+        <ozhera.rdbms.version>1.4-jdk21-SNAPSHOT</ozhera.rdbms.version>
     </properties>
 
     <dependencyManagement>
@@ -125,15 +126,16 @@
                 <artifactId>spring-context</artifactId>
                 <version>${spring.version}</version>
             </dependency>
-            <dependency>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-test</artifactId>
-                <version>${spring.version}</version>
-            </dependency>
+
             <dependency>
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-jdbc</artifactId>
                 <version>${spring.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>run.mone</groupId>
+                <artifactId>ozhera-rdbms</artifactId>
+                <version>${ozhera.rdbms.version}</version>
             </dependency>
 
             <dependency>
@@ -141,6 +143,11 @@
                 <artifactId>junit</artifactId>
                 <version>${junit.version}</version>
                 <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-test</artifactId>
+                <version>${spring.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

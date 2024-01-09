@@ -21,6 +21,7 @@
         <module>ozhera-webhook</module>
         <module>prometheus-starter-all</module>
         <module>trace-etl</module>
+        <module>ozhera-common</module>
     </modules>
 
     <properties>
@@ -28,6 +29,7 @@
         <maven.compiler.target>21</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <ozhera.project.version>1.4.0-jdk21-SNAPSHOT</ozhera.project.version>
+        <ozhera.rdbms.version>1.4.0-jdk21-SNAPSHOT</ozhera.rdbms.version>
     </properties>
 
     <dependencyManagement>
@@ -72,6 +74,13 @@
                 <artifactId>jedis</artifactId>
                 <version>4.2.0</version>
             </dependency>
+
+            <dependency>
+                <groupId>run.mone</groupId>
+                <artifactId>ozhera-rdbms</artifactId>
+                <version>${ozhera.rdbms.version}</version>
+            </dependency>
+
         </dependencies>
     </dependencyManagement>
 

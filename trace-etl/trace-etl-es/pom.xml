@@ -12,7 +12,6 @@
     <artifactId>trace-etl-es</artifactId>
 
     <dependencies>
-
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-core</artifactId>
@@ -62,6 +61,11 @@
             <groupId>run.mone</groupId>
             <artifactId>trace-etl-rocketmq-extension</artifactId>
             <version>1.0.0-jdk21-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>run.mone</groupId>
+            <artifactId>ozhera-rdbms</artifactId>
         </dependency>
     </dependencies>
 

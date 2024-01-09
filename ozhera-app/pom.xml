@@ -24,6 +24,7 @@
 
     <properties>
         <hera-app.release.version>1.4-jdk21-SNAPSHOT</hera-app.release.version>
+        <ozhera.rdbms.version>1.4-jdk21-SNAPSHOT</ozhera.rdbms.version>
     </properties>
 
     <dependencyManagement>
@@ -88,6 +89,13 @@
                 <artifactId>jedis</artifactId>
                 <version>4.2.0</version>
             </dependency>
+
+            <dependency>
+                <groupId>run.mone</groupId>
+                <artifactId>ozhera-rdbms</artifactId>
+                <version>${ozhera.rdbms.version}</version>
+            </dependency>
+
         </dependencies>
     </dependencyManagement>
 

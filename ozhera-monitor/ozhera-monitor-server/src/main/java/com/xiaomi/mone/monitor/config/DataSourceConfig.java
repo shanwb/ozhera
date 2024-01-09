@@ -18,7 +18,6 @@ package com.xiaomi.mone.monitor.config;
 
 import com.alibaba.nacos.api.config.annotation.NacosValue;
 import com.github.pagehelper.PageInterceptor;
-import com.mchange.v2.c3p0.ComboPooledDataSource;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.plugin.Interceptor;
 import org.apache.ibatis.session.SqlSessionFactory;
@@ -35,6 +34,8 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
+import run.mone.rdbms.DatasourceConfig;
+import run.mone.rdbms.DatasourceUtil;
 
 import javax.naming.NamingException;
 import javax.sql.DataSource;
@@ -78,29 +79,21 @@ public class DataSourceConfig {
     public DataSource masterDataSource() throws PropertyVetoException, NamingException {
         log.info("DataSourceConfig {} {} {} {}", serverType, dataSourceUrl, dataSourceUserName);
 
-        log.info("DataSourceConfig {} {} {} {}", serverType, dataSourceUrl, dataSourceUserName);
+        DatasourceConfig datasourceConfig = DatasourceConfig.builder()
+                .dataSourceUrl(dataSourceUrl)
+                .driverClass(driverClass)
+                .dataSourceUserName(dataSourceUserName)
+                .dataSourcePasswd(dataSourcePasswd)
+                .minPoolSize(defaultMinPoolSize)
+                .maxPoolSize(defaultMaxPoolSize)
+                .initialPoolSize(defaultInitialPoolSize)
+                .build();
 
-        ComboPooledDataSource dataSource = new ComboPooledDataSource();
-        dataSource.setDriverClass(driverClass);
-        dataSource.setJdbcUrl(dataSourceUrl);
-        dataSource.setUser(dataSourceUserName);
-        dataSource.setPassword(dataSourcePasswd);
-        dataSource.setInitialPoolSize(defaultInitialPoolSize);
-        dataSource.setMaxPoolSize(defaultMaxPoolSize);
-        dataSource.setMinPoolSize(defaultMinPoolSize);
-
-        setDatasouce(dataSource);
+        DataSource dataSource = DatasourceUtil.newDataSource(datasourceConfig);
+        log.warn("dataSourceUrl:{} init success", dataSourceUrl);
 
         return dataSource;
     }
-
-    private void setDatasouce(ComboPooledDataSource dataSource) {
-        dataSource.setTestConnectionOnCheckin(true);
-        dataSource.setTestConnectionOnCheckout(false);
-        dataSource.setPreferredTestQuery("select 1");
-        dataSource.setIdleConnectionTestPeriod(180);
-    }
-
     @Bean(name = "masterTransactionManager")
     @Primary
     public DataSourceTransactionManager masterTransactionManager() throws PropertyVetoException, NamingException {

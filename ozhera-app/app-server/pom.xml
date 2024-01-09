@@ -37,6 +37,11 @@
 
         <dependency>
             <groupId>run.mone</groupId>
+            <artifactId>ozhera-rdbms</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>run.mone</groupId>
             <artifactId>infra-result</artifactId>
         </dependency>
 

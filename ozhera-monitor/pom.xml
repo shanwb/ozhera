@@ -28,6 +28,7 @@
         <ozhera-monitor.release.version>1.2-jdk21-SNAPSHOT</ozhera-monitor.release.version>
         <!-- Replace it with the absolute path of your own hera-monitor project. -->
         <maven.jcommonDirectory>/opt/workspace_all/workspace_mi/mone_opensource/ozhera/ozhera-monitor</maven.jcommonDirectory>
+        <ozhera.rdbms.version>1.4-jdk21-SNAPSHOT</ozhera.rdbms.version>
     </properties>
 
     <dependencyManagement>
@@ -96,6 +97,13 @@
                 <artifactId>rocketmq-client</artifactId>
                 <version>4.9.3</version>
             </dependency>
+
+            <dependency>
+                <groupId>run.mone</groupId>
+                <artifactId>ozhera-rdbms</artifactId>
+                <version>${ozhera.rdbms.version}</version>
+            </dependency>
+
         </dependencies>
 
 
