@@ -41,18 +41,25 @@ public class DatasourceConfig implements Serializable {
 
     private String dataSourcePasswd;
 
+    @Builder.Default
     private Integer initialPoolSize = 10;
 
+    @Builder.Default
     private Integer maxPoolSize = 10;
 
+    @Builder.Default
     private Integer minPoolSize = 10;
 
+    @Builder.Default
     private Boolean testConnectionOnCheckIn = true;
 
+    @Builder.Default
     private Boolean testConnectionOnCheckOut = false;
 
+    @Builder.Default
     private String preferredTestQuery = "select 1";
 
+    @Builder.Default
     private int idleConnectionTestPeriod = 180;
 
 

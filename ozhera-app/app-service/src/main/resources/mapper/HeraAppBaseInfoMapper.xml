@@ -135,16 +135,21 @@
         <if test="myParticipant == null">
             LEFT JOIN
         </if>
-
         (
-        select count(1) as rnum,
-        role.app_id,
-        role.app_platform,
-        user
-        from hera_app_role role
-        GROUP BY app_id,app_platform,user HAVING `user`=#{participant}
-        ) as r
-        on r.app_id=app.bind_id and r.app_platform=app.platform_type
+            SELECT COUNT( 1 ) AS rnum,
+                ROLE.app_id,
+                ROLE.app_platform,
+                ROLE.USER
+            FROM
+                hera_app_role ROLE
+            GROUP BY
+                ROLE.app_id,
+                ROLE.app_platform,
+                ROLE.USER
+            HAVING
+                ROLE.USER = #{participant}
+            ) AS r ON r.app_id = app.bind_id
+            AND r.app_platform = app.platform_type
         where 1=1
         <if test="appName != null">
             and app.app_name like concat('%',#{appName},'%')

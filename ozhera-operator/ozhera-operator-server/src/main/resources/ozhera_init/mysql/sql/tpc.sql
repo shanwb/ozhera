@@ -462,3 +462,5 @@ CREATE TABLE `user_node_role_rel_entity`
     KEY            `idx_user_node_id` (`node_id`),
     KEY            `idx_role_id` (`role_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
