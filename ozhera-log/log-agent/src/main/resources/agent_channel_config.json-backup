@@ -16,15 +16,17 @@
       ],
       "input": {
         "type": "APP_LOG_MULTI",
-        "logPattern": "/home/work/log/ozx-official-website/server.log",
+        "logPattern": "/home/work/log/hera-app/*.log",
         "logSplitExpress": "/home/work/log/log-agent/server.log.*",
         "patternCode": "test_server_log"
       },
       "output": {
-        "type": "kafka",
-        "clusterInfo": "127.0.0.1:9092",
-        "producerGroup": "oz-test-group",
-        "topic": "oz-test-topic",
+        "type": "rocketmq",
+        "ak": "Please delete this line if not have ak",
+        "sk": "Please delete this line if not have sk",
+        "clusterInfo": "http://your-rmq-cluster:9876",
+        "producerGroup": "your producerGroup",
+        "topic": "your topic",
         "batchExportSize": 600
       },
       "filters": [

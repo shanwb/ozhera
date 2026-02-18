@@ -28,6 +28,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.ozhera.log.agent.common.Version;
 import org.apache.ozhera.log.agent.config.AgentConfigManager;
 import org.apache.ozhera.log.agent.config.ConfigCenter;
+import org.apache.ozhera.log.agent.config.local.LocalConfigCenter;
 import org.apache.ozhera.log.agent.config.nacos.NacosConfigCenter;
 import org.apache.ozhera.log.agent.rpc.task.PingTask;
 import org.apache.ozhera.log.common.Config;
@@ -43,10 +44,48 @@ import static org.apache.ozhera.log.utils.ConfigUtils.getDataHashKey;
 @Slf4j
 public class MiLogAgentBootstrap {
 
+    private static final String LOCAL_MODE = "json";
+
     public static void main(String[] args) throws Exception {
+        String channelLocator = Config.ins().get("agent.channel.locator", "json");
+        boolean isLocalMode = LOCAL_MODE.equalsIgnoreCase(channelLocator);
+
+        log.info("agent.channel.locator:{}, isLocalMode:{}", channelLocator, isLocalMode);
+
+        if (isLocalMode) {
+            startLocalMode();
+        } else {
+            startRpcMode();
+        }
+    }
+
+    /**
+     * Local mode: no Nacos/RPC dependency, read config from local agent_channel_config.json
+     */
+    private static void startLocalMode() throws Exception {
+        log.info("Starting agent in LOCAL mode (no Nacos dependency)");
+
+        Aop.ins().init(Maps.newLinkedHashMap());
+
+        // Use LocalConfigCenter instead of NacosConfigCenter
+        ConfigCenter agentConfigCenter = new LocalConfigCenter();
+        AgentConfigManager agentConfigManager = new AgentConfigManager(agentConfigCenter);
+        Ioc.ins().putBean(agentConfigManager);
+
+        Ioc.ins().init("org.apache.ozhera.log.agent", "com.xiaomi.youpin.docean");
+
+        log.info("Agent started in LOCAL mode successfully");
+        System.in.read();
+    }
+
+    /**
+     * RPC mode: connect to Nacos and log-agent-server for config management
+     */
+    private static void startRpcMode() throws Exception {
         String nacosAddr = getConfigValue("nacosAddr");
         String serviceName = getConfigValue("serviceName");
-        log.info("nacosAddr:{},serviceName:{},version:{}", nacosAddr, serviceName, new Version());
+        log.info("Starting agent in RPC mode - nacosAddr:{},serviceName:{},version:{}", nacosAddr, serviceName, new Version());
+
         String appName = Config.ins().get("app_name", "milog_agent");
         ClientInfo clientInfo = new ClientInfo(
                 String.format("%s_%d", appName, getDataHashKey(NetUtil.getLocalIp(), Integer.parseInt(Config.ins().get("app_max_index", "30")))),

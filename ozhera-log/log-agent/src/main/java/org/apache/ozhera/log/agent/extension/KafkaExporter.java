@@ -66,7 +66,20 @@ public class KafkaExporter implements MsgExporter {
 
     @Override
     public void close() {
-
+        if (producer != null) {
+            try {
+                producer.close();
+            } catch (Exception e) {
+                log.error("close kafka producer error", e);
+            }
+        }
+        if (topAppMqProducer != null) {
+            try {
+                topAppMqProducer.close();
+            } catch (Exception e) {
+                log.error("close topApp kafka producer error", e);
+            }
+        }
     }
 
     @Override

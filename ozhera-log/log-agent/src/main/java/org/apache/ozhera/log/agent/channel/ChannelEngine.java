@@ -678,6 +678,13 @@ public class ChannelEngine {
         }
         UpdateLogProcessCmd processCmd = assembleLogProcessData(channelStateList);
         RpcClient rpcClient = Ioc.ins().getBean(RpcClient.class);
+
+        // In local mode, RpcClient is null, skip sending progress
+        if (rpcClient == null) {
+            log.debug("skip send collect progress in local mode, data:{}", gson.toJson(processCmd));
+            return;
+        }
+
         RemotingCommand req = RemotingCommand.createRequestCommand(Constant.RPCCMD_AGENT_CODE);
 
         if (progressCompressValue) {
