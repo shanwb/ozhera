@@ -25,10 +25,11 @@ package org.apache.ozhera.log.api.enums;
  * @date 2023/11/10 14:31
  */
 public enum LogStorageTypeEnum {
-    
+
     ELASTICSEARCH,
     DORIS,
-    CLICKHOUSE;
+    CLICKHOUSE,
+    MYSQL;
     
     public static LogStorageTypeEnum queryByName(String name) {
         if (null == name || name.isEmpty()) {

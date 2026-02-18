@@ -73,6 +73,10 @@ public class LogStoragePlugin implements IPlugin {
                 DataSource dataSource = createDorisDataSource(cluster);
                 registerDorisDataSource(cluster, dataSource);
                 log.info("doris dataSource[{}]Generated successfully[{}]", cluster.getName(), Constant.LOG_STORAGE_SERV_BEAN_PRE + cluster.getId());
+            } else if (LogStorageTypeEnum.MYSQL == storageTypeEnum) {
+                DataSource dataSource = createMySqlDataSource(cluster);
+                registerMySqlDataSource(cluster, dataSource);
+                log.info("mysql dataSource[{}]Generated successfully[{}]", cluster.getName(), Constant.LOG_STORAGE_SERV_BEAN_PRE + cluster.getId());
             }
         } catch (Exception e) {
             log.error("init storage client error,cluster{}", GSON.toJson(cluster), e);
@@ -105,6 +109,20 @@ public class LogStoragePlugin implements IPlugin {
     }
 
     private void registerDorisDataSource(MilogEsClusterDO cluster, DataSource dataSource) {
+        Ioc.ins().putBean(Constant.LOG_STORAGE_SERV_BEAN_PRE + cluster.getId(), dataSource);
+    }
+
+    private DataSource createMySqlDataSource(MilogEsClusterDO cluster) {
+        String addr = cluster.getAddr();
+        PooledDataSource pooledDataSource = new PooledDataSource(driverClass, addr, cluster.getUser(), cluster.getPwd());
+        pooledDataSource.setPoolPingEnabled(true);
+        pooledDataSource.setPoolPingQuery("SELECT 1");
+        pooledDataSource.setPoolMaximumActiveConnections(20);
+        pooledDataSource.setPoolMaximumIdleConnections(10);
+        return pooledDataSource;
+    }
+
+    private void registerMySqlDataSource(MilogEsClusterDO cluster, DataSource dataSource) {
         Ioc.ins().putBean(Constant.LOG_STORAGE_SERV_BEAN_PRE + cluster.getId(), dataSource);
     }
 

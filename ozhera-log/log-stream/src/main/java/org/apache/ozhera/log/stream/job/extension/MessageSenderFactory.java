@@ -23,6 +23,7 @@ import org.apache.ozhera.log.api.enums.LogStorageTypeEnum;
 import org.apache.ozhera.log.stream.job.SinkJobConfig;
 import org.apache.ozhera.log.stream.job.extension.impl.DorisMessageSender;
 import org.apache.ozhera.log.stream.job.extension.impl.EsMessageSender;
+import org.apache.ozhera.log.stream.job.extension.impl.MySqlMessageSender;
 import org.apache.ozhera.log.stream.job.extension.impl.RocketMqMessageProduct;
 import org.apache.ozhera.log.stream.plugin.es.EsPlugin;
 import lombok.extern.slf4j.Slf4j;
@@ -51,6 +52,8 @@ public class MessageSenderFactory {
                 return getEsMessageSender(sinkJobConfig, mqMessageProduct);
             case DORIS:
                 return getDorisMessageSender(sinkJobConfig, mqMessageProduct);
+            case MYSQL:
+                return getMySqlMessageSender(sinkJobConfig, mqMessageProduct);
             default:
                 return null;
         }
@@ -70,5 +73,9 @@ public class MessageSenderFactory {
 
     private static MessageSender getDorisMessageSender(SinkJobConfig sinkJobConfig, MqMessageProduct mqMessageProduct) {
         return new DorisMessageSender(sinkJobConfig.getIndex(), mqMessageProduct, sinkJobConfig.getStorageInfo(), sinkJobConfig.getColumnList());
+    }
+
+    private static MessageSender getMySqlMessageSender(SinkJobConfig sinkJobConfig, MqMessageProduct mqMessageProduct) {
+        return new MySqlMessageSender(sinkJobConfig.getIndex(), mqMessageProduct, sinkJobConfig.getStorageInfo(), sinkJobConfig.getColumnList());
     }
 }

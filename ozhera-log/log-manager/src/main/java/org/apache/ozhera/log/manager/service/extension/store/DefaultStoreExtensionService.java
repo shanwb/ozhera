@@ -71,6 +71,9 @@ public class DefaultStoreExtensionService implements StoreExtensionService {
     @Resource
     private DorisLogStorageService dorisLogStorageService;
 
+    @Resource
+    private MySqlLogStorageService mySqlLogStorageService;
+
     @Override
     public boolean storeInfoCheck(LogStoreParam param) {
         return false;
@@ -95,7 +98,7 @@ public class DefaultStoreExtensionService implements StoreExtensionService {
 
             MilogEsClusterDO esClusterDO = milogEsClusterMapper.selectById(storeParam.getEsResourceId());
             LogStorageTypeEnum storageTypeEnum = LogStorageTypeEnum.queryByName(esClusterDO.getLogStorageType());
-            if (storageTypeEnum == LogStorageTypeEnum.DORIS) {
+            if (storageTypeEnum == LogStorageTypeEnum.DORIS || storageTypeEnum == LogStorageTypeEnum.MYSQL) {
                 return;
             }
 
@@ -140,69 +143,74 @@ public class DefaultStoreExtensionService implements StoreExtensionService {
 
     @Override
     public void postProcessing(MilogLogStoreDO storeDO, LogStoreParam cmd, OperateEnum operateEnum) {
-        if (isDorisStorage(storeDO)) {
-            processDorisStorage(storeDO, cmd, operateEnum);
+        LogStorageTypeEnum storageType = getStorageType(storeDO);
+        if (storageType == LogStorageTypeEnum.DORIS) {
+            processTableBasedStorage(storeDO, cmd, operateEnum, dorisLogStorageService);
+        } else if (storageType == LogStorageTypeEnum.MYSQL) {
+            processTableBasedStorage(storeDO, cmd, operateEnum, mySqlLogStorageService);
         }
     }
 
-    private boolean isDorisStorage(MilogLogStoreDO storeDO) {
+    private LogStorageTypeEnum getStorageType(MilogLogStoreDO storeDO) {
         MilogEsClusterDO esClusterDO = milogEsClusterMapper.selectById(storeDO.getEsClusterId());
-        LogStorageTypeEnum storageTypeEnum = LogStorageTypeEnum.queryByName(esClusterDO.getLogStorageType());
-        return storageTypeEnum == LogStorageTypeEnum.DORIS;
+        return LogStorageTypeEnum.queryByName(esClusterDO.getLogStorageType());
     }
 
-    private void processDorisStorage(MilogLogStoreDO ml, LogStoreParam cmd, OperateEnum operateEnum) {
+    private boolean isTableBasedStorage(MilogLogStoreDO storeDO) {
+        LogStorageTypeEnum storageType = getStorageType(storeDO);
+        return storageType == LogStorageTypeEnum.DORIS || storageType == LogStorageTypeEnum.MYSQL;
+    }
+
+    private void processTableBasedStorage(MilogLogStoreDO ml, LogStoreParam cmd, OperateEnum operateEnum, LogStorageService storageService) {
         LogStorageData storageData = LogStorageData.builder()
                 .storeId(ml.getId()).build();
 
         switch (operateEnum) {
             case DELETE_OPERATE:
-                deleteDorisTable(ml, storageData);
+                deleteTable(ml, storageData, storageService);
                 break;
             case ADD_OPERATE:
-                addDorisTable(cmd, storageData);
+                addTable(cmd, storageData, storageService);
                 break;
             case UPDATE_OPERATE:
-                updateDorisTable(ml, cmd, storageData);
+                updateTable(ml, cmd, storageData, storageService);
                 break;
             default:
                 // other operations can be processed according to actual needs
         }
 
-        updateEsIndexIfNeeded(ml, storageData, operateEnum);
+        updateEsIndexIfNeeded(ml, storageData, operateEnum, storageService);
     }
 
-
-    private void deleteDorisTable(MilogLogStoreDO ml, LogStorageData storageData) {
+    private void deleteTable(MilogLogStoreDO ml, LogStorageData storageData, LogStorageService storageService) {
         storageData.setClusterId(ml.getEsClusterId());
-        dorisLogStorageService.deleteTable(storageData);
+        storageService.deleteTable(storageData);
     }
 
-
-    private void addDorisTable(LogStoreParam cmd, LogStorageData storageData) {
+    private void addTable(LogStoreParam cmd, LogStorageData storageData, LogStorageService storageService) {
         storageData.setLogType(cmd.getLogType());
         storageData.setClusterId(cmd.getEsResourceId());
         storageData.setLogStoreName(cmd.getLogstoreName());
         storageData.setKeys(cmd.getKeyList());
         storageData.setColumnTypes(cmd.getColumnTypeList());
-        dorisLogStorageService.createTable(storageData);
+        storageService.createTable(storageData);
     }
 
-    private void updateDorisTable(MilogLogStoreDO ml, LogStoreParam cmd, LogStorageData storageData) {
+    private void updateTable(MilogLogStoreDO ml, LogStoreParam cmd, LogStorageData storageData, LogStorageService storageService) {
         storageData.setUpdateKeys(cmd.getKeyList());
         storageData.setUpdateColumnTypes(cmd.getColumnTypeList());
         storageData.setKeys(ml.getKeyList());
         storageData.setColumnTypes(ml.getColumnTypeList());
         storageData.setLogStoreName(ml.getLogstoreName());
         storageData.setUpdateStoreName(cmd.getLogstoreName());
-        dorisLogStorageService.updateTable(storageData);
+        storageService.updateTable(storageData);
     }
 
-    private void updateEsIndexIfNeeded(MilogLogStoreDO ml, LogStorageData storageData, OperateEnum operateEnum) {
+    private void updateEsIndexIfNeeded(MilogLogStoreDO ml, LogStorageData storageData, OperateEnum operateEnum, LogStorageService storageService) {
         if (OperateEnum.DELETE_OPERATE == operateEnum) {
             return;
         }
-        String tableName = dorisLogStorageService.buildTableName(storageData.getClusterId(), storageData.getStoreId());
+        String tableName = storageService.buildTableName(storageData.getClusterId(), storageData.getStoreId());
         if (!StringUtils.equals(tableName, ml.getEsIndex())) {
             ml.setEsClusterId(storageData.getClusterId());
             ml.setEsIndex(tableName);
