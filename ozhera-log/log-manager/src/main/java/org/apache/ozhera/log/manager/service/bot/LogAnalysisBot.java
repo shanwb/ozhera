@@ -145,7 +145,7 @@ public class LogAnalysisBot extends Role {
     }
 
     private List<LogAiMessage> getReq(LLM llm, String content) {
-        if(llm.getConfig().getLlmProvider() == LLMProvider.MIFY_GATEWAY){
+        if(llm.getConfig().getLlmProvider() == LLMProvider.OPENAICOMPATIBLE){
             List<LogAiMessage> logAiMessages = initMessageList();
             BotQAParam botQAParam = GSON.fromJson(content, BotQAParam.class);
             if (botQAParam.getHistoryConversation() != null && !botQAParam.getHistoryConversation().isEmpty()){

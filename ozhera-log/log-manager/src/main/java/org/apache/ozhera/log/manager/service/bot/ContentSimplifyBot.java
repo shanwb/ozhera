@@ -145,7 +145,7 @@ public class ContentSimplifyBot extends Role {
 
     private JsonObject getReq(LLM llm, String text) {
         JsonObject req = new JsonObject();
-        if (llm.getConfig().getLlmProvider() == LLMProvider.MIFY_GATEWAY) {
+        if (llm.getConfig().getLlmProvider() == LLMProvider.OPENAICOMPATIBLE) {
             req.addProperty("role", "user");
             req.addProperty("content", text);
         }

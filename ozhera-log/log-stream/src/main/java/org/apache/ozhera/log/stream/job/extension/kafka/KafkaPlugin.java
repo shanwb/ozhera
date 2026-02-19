@@ -89,6 +89,9 @@ public class KafkaPlugin implements MQPlugin {
         props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.StringDeserializer");
         //Consumer instances belonging to the same group will load consumer messages
         props.put(ConsumerConfig.GROUP_ID_CONFIG, config.getConsumerGroup());
+        //Start consuming from the earliest offset when no committed offset exists
+        //todo
+        props.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
         //Change hostname verification to empty
         props.put(SslConfigs.SSL_ENDPOINT_IDENTIFICATION_ALGORITHM_CONFIG, "");
         return new KafkaConsumer<>(props);

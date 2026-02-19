@@ -91,7 +91,7 @@ public class ConfigManager {
      * @throws StreamException
      */
     public void initializeStreamConfig() throws StreamException {
-        log.debug("[initStream} nacos dataId:{},group:{}", spaceDataId, DEFAULT_GROUP_ID);
+        log.info("[initStream} nacos dataId:{},group:{}", spaceDataId, DEFAULT_GROUP_ID);
         String streamConfigStr = nacosConfig.getConfigStr(spaceDataId, DEFAULT_GROUP_ID, DEFAULT_TIME_OUT_MS);
         MiLogStreamConfig milogStreamConfig;
         try {

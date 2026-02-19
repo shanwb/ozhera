@@ -109,7 +109,7 @@ public class MilogAiAnalysisServiceImpl implements MilogAiAnalysisService {
         LLMConfig config = LLMConfig.builder()
                 .url(llmUrl)
                 .token(llmToken)
-                .llmProvider(LLMProvider.MIFY_GATEWAY)
+                .llmProvider(LLMProvider.OPENAICOMPATIBLE)
                 .build();
         LLM llm = new LLM(config);
         llm.setConfigFunction(llmProvider -> Optional.of(config));
