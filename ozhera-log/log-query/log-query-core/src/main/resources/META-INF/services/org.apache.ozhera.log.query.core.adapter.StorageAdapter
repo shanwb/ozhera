@@ -1,0 +1,3 @@
+org.apache.ozhera.log.query.core.adapter.ElasticsearchAdapter
+org.apache.ozhera.log.query.core.adapter.DorisAdapter
+org.apache.ozhera.log.query.core.adapter.MySqlAdapter
