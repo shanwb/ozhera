@@ -185,14 +185,21 @@ public class LogQueryServiceImpl implements LogQueryService {
         return true;
     }
 
+    private static final String MYSQL_TABLE_PREFIX = "hera_log_mysql_table";
+
     private StorageInfo getStorageInfo(Long storeId) {
         if (storageInfoProvider != null) {
             return storageInfoProvider.getStorageInfo(storeId);
         }
-        // Default implementation - should be overridden
-        log.warn("StorageInfoProvider not set, returning default storage info");
+        // Default implementation - use MySQL with default cluster ID
+        // Table name format: hera_log_mysql_table_{clusterId}_{storeId}
+        log.warn("StorageInfoProvider not set, returning default MySQL storage info");
+        Long clusterId = 1L;
+        String tableName = String.format("%s_%s_%s", MYSQL_TABLE_PREFIX, clusterId, storeId);
         return StorageInfo.builder()
-                .storageType(LogStorageTypeEnum.ELASTICSEARCH)
+                .clusterId(clusterId)
+                .storageType(LogStorageTypeEnum.MYSQL)
+                .indexName(tableName)
                 .build();
     }
 

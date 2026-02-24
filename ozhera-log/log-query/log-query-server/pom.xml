@@ -52,6 +52,7 @@ http://www.apache.org/licenses/LICENSE-2.0
             <artifactId>docean-plugin-configuration</artifactId>
         </dependency>
 
+        <!-- Nacos plugin - uncomment if you need Nacos config center
         <dependency>
             <groupId>run.mone</groupId>
             <artifactId>docean-plugin-nacos</artifactId>
@@ -67,6 +68,21 @@ http://www.apache.org/licenses/LICENSE-2.0
             <groupId>run.mone</groupId>
             <artifactId>nacos</artifactId>
         </dependency>
+        -->
+
+        <!-- HikariCP for MySQL connection pool -->
+        <dependency>
+            <groupId>com.zaxxer</groupId>
+            <artifactId>HikariCP</artifactId>
+            <version>5.0.1</version>
+        </dependency>
+
+        <!-- MySQL driver -->
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>8.0.33</version>
+        </dependency>
     </dependencies>
 
     <build>
@@ -74,6 +90,9 @@ http://www.apache.org/licenses/LICENSE-2.0
             <resource>
                 <directory>src/main/resources</directory>
                 <filtering>true</filtering>
+                <excludes>
+                    <exclude>config/*.properties</exclude>
+                </excludes>
             </resource>
             <resource>
                 <directory>${project.basedir}/../../../</directory>
@@ -100,5 +119,27 @@ http://www.apache.org/licenses/LICENSE-2.0
             </plugin>
         </plugins>
     </build>
+
+    <profiles>
+        <profile>
+            <id>local</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <build>
+                <filters>
+                    <filter>src/main/resources/config/local.properties</filter>
+                </filters>
+            </build>
+        </profile>
+        <profile>
+            <id>open</id>
+            <build>
+                <filters>
+                    <filter>src/main/resources/config/open.properties</filter>
+                </filters>
+            </build>
+        </profile>
+    </profiles>
 
 </project>

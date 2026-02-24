@@ -44,7 +44,7 @@ public class LogQueryController {
      * @param query unified log query
      * @return query result
      */
-    @RequestMapping(path = "/api/v1/log/query", method = "post")
+    @RequestMapping(path = "/api/v1/log/query")
     public Result<UnifiedLogResult> query(UnifiedLogQuery query) {
         try {
             log.info("LogQueryController.query, storeId: {}", query.getStoreId());
@@ -104,7 +104,7 @@ public class LogQueryController {
      * @param query unified log query with aggregation spec
      * @return aggregation result
      */
-    @RequestMapping(path = "/api/v1/log/aggregate", method = "post")
+    @RequestMapping(path = "/api/v1/log/aggregate")
     public Result<AggregationResult> aggregate(UnifiedLogQuery query) {
         try {
             log.info("LogQueryController.aggregate, storeId: {}", query.getStoreId());
@@ -122,7 +122,7 @@ public class LogQueryController {
      * @param query unified log query
      * @return count result
      */
-    @RequestMapping(path = "/api/v1/log/count", method = "post")
+    @RequestMapping(path = "/api/v1/log/count")
     public Result<Long> count(UnifiedLogQuery query) {
         try {
             log.info("LogQueryController.count, storeId: {}", query.getStoreId());

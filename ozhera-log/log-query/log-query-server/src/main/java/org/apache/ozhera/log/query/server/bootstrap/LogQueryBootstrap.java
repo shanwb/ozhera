@@ -35,11 +35,18 @@ public class LogQueryBootstrap {
         try {
             log.info("Starting Log Query Server...");
 
+            // Load configuration
+            Config config = Config.ins();
+            String defaultStorage = config.get("log.query.default.storage", "mysql");
+            log.info("Default storage type: {}", defaultStorage);
+
+            // Initialize IoC container
             Ioc.ins().putBean(Cons.AUTO_FIND_IMPL, "true")
+                    .putBean("defaultStorageType", defaultStorage)
                     .init("com.xiaomi.mone", "com.xiaomi.youpin", "org.apache.ozhera.log.query");
 
-            Config ins = Config.ins();
-            int port = Integer.parseInt(ins.get("serverPort", "8080"));
+            // Start HTTP server
+            int port = Integer.parseInt(config.get("server.port", "8090"));
 
             DoceanHttpServer server = new DoceanHttpServer(HttpServerConfig.builder()
                     .websocket(false)
@@ -48,6 +55,7 @@ public class LogQueryBootstrap {
             server.start();
 
             log.info("Log Query Server started successfully on port {}", port);
+            log.info("API endpoints available at http://localhost:{}/api/v1/log/", port);
         } catch (Exception e) {
             log.error("Failed to start Log Query Server", e);
             System.exit(1);
