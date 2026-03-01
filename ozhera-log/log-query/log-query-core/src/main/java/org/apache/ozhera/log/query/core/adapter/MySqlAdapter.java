@@ -248,10 +248,10 @@ public class MySqlAdapter implements StorageAdapter {
             }
         }
 
-        // Full text search
+        // Full text search: check both message and logsource for unparsed logs
         if (query.hasFullTextSearch()) {
             String searchText = escapeValue(query.getFullTextSearch());
-            conditions.add(String.format("message LIKE '%%%s%%'", searchText));
+            conditions.add(String.format("(message LIKE '%%%s%%' OR logsource LIKE '%%%s%%')", searchText, searchText));
         }
 
         // Field conditions

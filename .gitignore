@@ -25,3 +25,4 @@ nohup*
 
 # Mobile Tools for Java (J2ME)
 .mtj.tmp/
+/ozhera-log/log-query/log-query-server/src/main/resources/config/local.properties
