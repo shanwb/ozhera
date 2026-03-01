@@ -154,10 +154,10 @@ public class LogQueryServiceImpl implements LogQueryService {
         if (query.getStoreId() == null) {
             return false;
         }
-        if (query.getStartTime() == null || query.getEndTime() == null) {
+        if (query.getStartTimeMs() == null || query.getEndTimeMs() == null) {
             return false;
         }
-        if (query.getStartTime() > query.getEndTime()) {
+        if (query.getStartTimeMs() > query.getEndTimeMs()) {
             return false;
         }
         return true;

@@ -128,9 +128,97 @@ public class UnifiedLogQueryTest {
         assertEquals(Long.valueOf(123), query.getStoreId());
         assertEquals("test-store", query.getStoreName());
         assertEquals(2, query.getTailIds().size());
-        assertEquals(Long.valueOf(1000), query.getStartTime());
-        assertEquals(Long.valueOf(2000), query.getEndTime());
+        assertEquals(Long.valueOf(1000), query.getStartTimeMs());
+        assertEquals(Long.valueOf(2000), query.getEndTimeMs());
         assertEquals("error", query.getFullTextSearch());
         assertEquals(2, query.getConditions().size());
+    }
+
+    @Test
+    public void testTimeParsing_MillisecondTimestamp() {
+        // Test with Long timestamp
+        UnifiedLogQuery query1 = UnifiedLogQuery.builder()
+                .startTime(1738368000000L)
+                .endTime(1738454400000L)
+                .build();
+        assertEquals(Long.valueOf(1738368000000L), query1.getStartTimeMs());
+        assertEquals(Long.valueOf(1738454400000L), query1.getEndTimeMs());
+
+        // Test with String timestamp
+        UnifiedLogQuery query2 = UnifiedLogQuery.builder()
+                .startTime("1738368000000")
+                .endTime("1738454400000")
+                .build();
+        assertEquals(Long.valueOf(1738368000000L), query2.getStartTimeMs());
+        assertEquals(Long.valueOf(1738454400000L), query2.getEndTimeMs());
+    }
+
+    @Test
+    public void testTimeParsing_Iso8601Format() {
+        // Test with ISO 8601 format
+        UnifiedLogQuery query = UnifiedLogQuery.builder()
+                .startTime("2024-01-01T00:00:00Z")
+                .endTime("2024-01-02T00:00:00Z")
+                .build();
+        assertEquals(Long.valueOf(1704067200000L), query.getStartTimeMs());
+        assertEquals(Long.valueOf(1704153600000L), query.getEndTimeMs());
+    }
+
+    @Test
+    public void testTimeParsing_DateFormat() {
+        // Test with date only format
+        UnifiedLogQuery query = UnifiedLogQuery.builder()
+                .startTime("2024-01-01")
+                .endTime("2024-01-02")
+                .build();
+        assertNotNull(query.getStartTimeMs());
+        assertNotNull(query.getEndTimeMs());
+        assertTrue(query.getEndTimeMs() > query.getStartTimeMs());
+    }
+
+    @Test
+    public void testTimeParsing_DateTimeFormat() {
+        // Test with date time format
+        UnifiedLogQuery query = UnifiedLogQuery.builder()
+                .startTime("2024-01-01 00:00:00")
+                .endTime("2024-01-02 12:30:45")
+                .build();
+        assertNotNull(query.getStartTimeMs());
+        assertNotNull(query.getEndTimeMs());
+        assertTrue(query.getEndTimeMs() > query.getStartTimeMs());
+    }
+
+    @Test
+    public void testIsValid() {
+        // Valid query
+        UnifiedLogQuery validQuery = UnifiedLogQuery.builder()
+                .storeId(1L)
+                .startTime(1738368000000L)
+                .endTime(1738454400000L)
+                .build();
+        assertTrue(validQuery.isValid());
+
+        // Missing storeId
+        UnifiedLogQuery missingStoreId = UnifiedLogQuery.builder()
+                .startTime(1738368000000L)
+                .endTime(1738454400000L)
+                .build();
+        assertFalse(missingStoreId.isValid());
+
+        // Invalid time range
+        UnifiedLogQuery invalidTimeRange = UnifiedLogQuery.builder()
+                .storeId(1L)
+                .startTime(1738454400000L)
+                .endTime(1738368000000L)
+                .build();
+        assertFalse(invalidTimeRange.isValid());
+
+        // With string dates
+        UnifiedLogQuery stringDates = UnifiedLogQuery.builder()
+                .storeId(1L)
+                .startTime("2024-01-01")
+                .endTime("2024-01-02")
+                .build();
+        assertTrue(stringDates.isValid());
     }
 }

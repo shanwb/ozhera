@@ -191,7 +191,7 @@ public class ElasticsearchAdapter implements StorageAdapter {
             BoolQueryBuilder boolQuery = buildBoolQuery(query);
             AggregationSpec aggSpec = query.getAggregation();
 
-            String interval = calculateHistogramInterval(query.getEndTime() - query.getStartTime());
+            String interval = calculateHistogramInterval(query.getEndTimeMs() - query.getStartTimeMs());
             if (interval.isEmpty()) {
                 return new AggregationResult();
             }
@@ -200,8 +200,8 @@ public class ElasticsearchAdapter implements StorageAdapter {
                     storageInfo.getIndexName(),
                     aggSpec.getField() != null ? aggSpec.getField() : "timestamp",
                     interval,
-                    query.getStartTime(),
-                    query.getEndTime(),
+                    query.getStartTimeMs(),
+                    query.getEndTimeMs(),
                     boolQuery
             );
 
@@ -280,8 +280,8 @@ public class ElasticsearchAdapter implements StorageAdapter {
 
         // Time range filter
         boolQuery.filter(QueryBuilders.rangeQuery("timestamp")
-                .from(query.getStartTime())
-                .to(query.getEndTime()));
+                .from(query.getStartTimeMs())
+                .to(query.getEndTimeMs()));
 
         // Tail filter
         if (query.hasTailFilter()) {

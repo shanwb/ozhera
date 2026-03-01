@@ -186,7 +186,7 @@ public class DorisAdapter implements StorageAdapter {
 
         // Time range
         conditions.add(String.format("timestamp >= %d AND timestamp <= %d",
-                query.getStartTime(), query.getEndTime()));
+                query.getStartTimeMs(), query.getEndTimeMs()));
 
         // Tail filter
         if (query.hasTailFilter()) {

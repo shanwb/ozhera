@@ -62,8 +62,8 @@ public class SqlQueryParserTest {
         UnifiedLogQuery query = parser.parse(sql);
 
         assertNotNull(query);
-        assertEquals(Long.valueOf(1000), query.getStartTime());
-        assertEquals(Long.valueOf(2000), query.getEndTime());
+        assertEquals(Long.valueOf(1000), query.getStartTimeMs());
+        assertEquals(Long.valueOf(2000), query.getEndTimeMs());
     }
 
     @Test
@@ -72,8 +72,8 @@ public class SqlQueryParserTest {
         UnifiedLogQuery query = parser.parse(sql);
 
         assertNotNull(query);
-        assertEquals(Long.valueOf(1000), query.getStartTime());
-        assertEquals(Long.valueOf(2000), query.getEndTime());
+        assertEquals(Long.valueOf(1000), query.getStartTimeMs());
+        assertEquals(Long.valueOf(2000), query.getEndTimeMs());
     }
 
     @Test
@@ -195,8 +195,8 @@ public class SqlQueryParserTest {
         UnifiedLogQuery query = parser.parse(sql);
 
         assertNotNull(query);
-        assertEquals(Long.valueOf(1000), query.getStartTime());
-        assertEquals(Long.valueOf(2000), query.getEndTime());
+        assertEquals(Long.valueOf(1000), query.getStartTimeMs());
+        assertEquals(Long.valueOf(2000), query.getEndTimeMs());
         assertEquals(Long.valueOf(123), query.getStoreId());
         assertEquals("exception", query.getFullTextSearch());
         assertEquals("timestamp", query.getSortField());
